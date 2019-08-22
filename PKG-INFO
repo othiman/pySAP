@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: sap
+Version: 1.0
+Summary: A python module providing Session Annoucement Protocol (RFC2974) support
+Home-page: http://www.randomwalking.com/projects/pySAP.php
+Author: Michael Ihde
+Author-email: mike.ihde@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
