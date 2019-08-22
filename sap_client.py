@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# 
+#
 import sap
 import socket
 import struct
@@ -14,6 +14,6 @@ if __name__ == "__main__":
 
     while True:
         data = sock.recv(4096)
-	msg = sap.Message()
-	msg.unpack(data)
-	print "Received SAP:\n", msg
+        msg = sap.Message()
+        msg.unpack(data)
+        print("Received SAP:{}\n".format(msg))

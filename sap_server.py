@@ -26,15 +26,14 @@ if __name__ == "__main__":
     # Grab some info
     myaddr = socket.gethostbyname(socket.gethostname())
     while True:
-	# Generate and send a message	
-	msg = sap.Message()
-	msg.setSource(myaddr)
-	msg.setPayload(SDP)
-	msg.setMsgHash(1)
-	print "Sending SAP packet"
-	data = msg.pack()
-	sock.sendto(data, (sap.DEF_ADDR, sap.DEF_PORT))
+        # Generate and send a message
+        msg = sap.Message()
+        msg.setSource(myaddr)
+        msg.setPayload(SDP)
+        msg.setMsgHash(1)
+        print("Sending SAP packet")
+        data = msg.pack()
+        sock.sendto(data, (sap.DEF_ADDR, sap.DEF_PORT))
         delay = sap.tx_delay(len(data))
-	print "Sleeping for %d seconds" % delay
-	time.sleep(delay)
-
+        print("Sleeping for {} seconds".format(delay))
+        time.sleep(delay)
