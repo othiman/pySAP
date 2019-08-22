@@ -94,7 +94,7 @@ class Message:
         self._src_ip = (address_family, ip_string)
 
     def setPayload(self, data, type="application/sdp"):
-        self._payload = data
+        self._payload = str.encode(data)
 
     def setCompression(self, compress):
         self._compress = compress
@@ -114,7 +114,7 @@ class Message:
         _PADDING = 0x01 << 4
 
         if type < 0 or type > 15:
-            raise SAPException, "Invalid authentication type"
+            warnings.warn("Invalid authentication type")
         if not type in [AUTH_PGP, AUTH_CMS]:
             warnings.warn("Non standard authentication type.  Only PGP and CMS are supported.")
 
@@ -130,7 +130,7 @@ class Message:
                 paddata = struct.pack("B", padbytes)
                 data.extend([paddata for x in xrange(padbytes)])
             # Double check our algorithm
-            assert len(data) % 4 == 0
+            assert( len(data)%4 == 0 )
             authheader = []
             authheader.append(struct.pack("B", fbyte))
             authheader.append(self._data)
@@ -147,7 +147,7 @@ class Message:
         self._msg_hash = msg_hash
         sap_version = (fbyte & 0xE0) >> self._SAP_VERSION
         if sap_version != 0x01:
-            raise SAPException, "Unsupported SAP version received"
+            warnings.warn("Unsupported SAP version received")
 
         self._compress = (fbyte & self._COMPRESSED) != 0x00
         self._deletion = (fbyte & self._DELETION) != 0x00
@@ -168,10 +168,10 @@ class Message:
         # For payload type we have to search until finding
         # a null unless the first three bytes equal 'v=0'
         # The standard first line for SDP
-        if payload_and_type[0:2] == "v=0":
+        if payload_and_type[0:3] == "v=0":
             self._payload = payload_and_type
         else:
-            null_index = payload_and_type.index('\0')
+            null_index = payload_and_type.index(b'\0')
             self._payload_type = payload_and_type[0:null_index]
             self._payload = payload_and_type[null_index+1:]
 
@@ -181,7 +181,7 @@ class Message:
             try:
                 self._payload = decryptor(self._payload)
             except TypeError:
-                raise SAPException, "Received encrypted packet but no decryptor provided"
+                warnings.warn("Received encrypted packet but no decryptor provided")
 
         compressed = (fbyte & self._COMPRESSED) != 0x00
         if compressed:
@@ -221,9 +221,9 @@ class Message:
         sap = []
         sap.append(struct.pack("BBH", fbyte, 0, self._msg_hash))
         sap.append(socket.inet_pton(*self._src_ip))
-        sap.append(self._payload_type + '\0')
+        sap.append(str.encode(self._payload_type + '\0'))
         sap.append(payload)
-        result = "".join(sap)
+        result = b''.join(sap)
 
         # See if we want to add authentication
         if callable(authenticator):
@@ -265,5 +265,5 @@ if __name__ == "__main__":
     msg2 = Message()
     data = msg1.pack()
     msg2.unpack(data)
-    print msg1
-    print msg2
+    print(msg1)
+    print(msg2)
